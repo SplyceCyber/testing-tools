@@ -68,7 +68,6 @@ echo "[+] Installing Evil-WinRM..."
 sudo gem install evil-winrm
 
 echo "[+] Installing RustScan..."
-curl https://sh.rustup.rs -sSf | sh
 cargo install rustscan
 
 echo "[+] Installing Kerbrute..."
@@ -92,10 +91,10 @@ echo "[+] Installing Katana..."
 go install github.com/projectdiscovery/katana/cmd/katana@latest
 
 echo "[+] Installing Pwntools..."
-pip3 --break-system-packages install pwntools
+pip3 install --break-system-packages pwntools
 
 echo "[+] Installing ROPgadget..."
-pip3 --break-system-packages install ropgadget
+pip3 install --break-system-packages ropgadget
 
 echo "[+] Installing pwndbg..."
 cd /opt
