@@ -5,10 +5,17 @@ echo "[+] Updating system..."
 sudo apt update -y && sudo apt full-upgrade -y
 
 echo "[+] Installing baseline packages..."
-sudo apt install -y git curl wget python3 python3-pip pipx ruby-full cargo golang feroxbuster ffuf gobuster seclists dirb nmap smbclient cifs-utils code
+sudo apt install -y git curl wget python3 python3-pip pipx ruby-full cargo golang ffuf gobuster seclists dirb nmap smbclient cifs-utils code
 
 echo "[+] Creating /opt structure..."
-sudo mkdir -p /opt/{SecLists,assetnote-wordlists,fuzzdb,probable-wordlists,dirsearch,reconftw,peass,lse,pspy,PowerSploit,bloodhound,PATT,LinEnum,SUID3NUM}
+sudo mkdir -p /opt/{SecLists,assetnote-wordlists,fuzzdb,probable-wordlists,dirsearch,reconftw,peass,lse,pspy,PowerSploit,bloodhound,PATT,LinEnum,SUID3NUM,feroxbuster}
+
+echo "[+] Intalling feroxbuster..."
+curl -sL https://raw.githubusercontent.com/epi052/feroxbuster/main/install-nix.sh > install-nix.sh
+mv install-nix.sh /opt/feroxbuster/install-nix.sh
+chmod +x /opt/feroxbuster/install-nix.sh
+bash /opt/feroxbuster/install-nix.sh
+mv feroxbuster /usr/local/bin/feroxbuster
 
 echo "[+] Installing SecLists..."
 sudo rsync -av --ignore-existing /usr/share/seclists/ /opt/SecLists/ || true
