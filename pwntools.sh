@@ -5,7 +5,12 @@ echo "[+] Updating system..."
 sudo apt update -y && sudo apt full-upgrade -y
 
 echo "[+] Installing baseline packages..."
-sudo apt install -y git curl wget python3 python3-pip pipx ruby-full cargo golang ffuf gobuster seclists dirb nmap smbclient cifs-utils code
+sudo apt install -y git curl wget python3 python3-pip pipx ruby-full golang ffuf gobuster seclists dirb nmap smbclient cifs-utils
+
+echo "[+] Setting up rust..."
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source ~/.cargo/env
+echo 'source ~/.cargo/env' >> ~/.bashrc
 
 echo "[+] Creating /opt structure..."
 sudo mkdir -p /opt/{SecLists,assetnote-wordlists,fuzzdb,probable-wordlists,dirsearch,reconftw,peass,lse,pspy,PowerSploit,bloodhound,PATT,LinEnum,SUID3NUM,feroxbuster}
@@ -63,19 +68,21 @@ echo "[+] Installing Evil-WinRM..."
 sudo gem install evil-winrm
 
 echo "[+] Installing RustScan..."
+curl https://sh.rustup.rs -sSf | sh
 cargo install rustscan
 
 echo "[+] Installing Kerbrute..."
 go install github.com/ropnop/kerbrute@latest
 
 echo "[+] Installing AutoRecon..."
-pip3 install git+https://github.com/Tib3rius/AutoRecon.git
+pip3 install --break-system-packages git+https://github.com/Tib3rius/AutoRecon.git
 
 echo "[+] Installing Impacket (latest)..."
-pip3 install git+https://github.com/fortra/impacket.git
+pip3 install --break-system-packages git+https://github.com/fortra/impacket.git
 
 echo "[+] Installing CrackMapExec..."
-pipx install crackmapexec
+echo "Note: CrackMapExec is obsolete and replaced by 'nxc'"
+#pipx install crackmapexec
 
 echo "[+] Installing Nuclei + Templates..."
 go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
@@ -85,10 +92,10 @@ echo "[+] Installing Katana..."
 go install github.com/projectdiscovery/katana/cmd/katana@latest
 
 echo "[+] Installing Pwntools..."
-pip3 install pwntools
+pip3 --break-system-packages install pwntools
 
 echo "[+] Installing ROPgadget..."
-pip3 install ropgadget
+pip3 --break-system-packages install ropgadget
 
 echo "[+] Installing pwndbg..."
 cd /opt
