@@ -5,7 +5,17 @@ echo "[+] Updating system..."
 sudo apt update -y && sudo apt full-upgrade -y
 
 echo "[+] Installing baseline packages..."
-sudo apt install -y git curl wget python3 python3-pip pipx ruby-full golang ffuf gobuster seclists dirb nmap smbclient cifs-utils
+sudo apt install -y git curl wget python3 python3-pip pipx ruby-full golang ffuf gobuster seclists dirb smbclient cifs-utils locate libssl-dev liblua5.4-dev lua5.4
+
+# Note: The default Parrot nmap install has broken mssql scripts. This reinstalls nmap to fix that.
+echo "[+] Reinstalling Nmap to ensure latest scripts (fixed mssql)..."
+sudo apt purge -y nmap nmap-common
+sudo apt autoremove -y
+sudo rm -rf /usr/share/nmap
+sudo rm -rf /usr/local/share/nmap
+sudo apt update -y
+sudo apt install -y nmap nmap-common
+sudo nmap --script-updatedb
 
 echo "[+] Setting up rust..."
 curl https://sh.rustup.rs -sSf | sh -s -- -y
@@ -100,6 +110,15 @@ echo "[+] Installing pwndbg..."
 cd /opt
 sudo git clone https://github.com/pwndbg/pwndbg || true
 cd pwndbg && ./setup.sh
+
+echo "[+] Installing SMNP tools..."
+sudo apt install -y snmp
+
+echo "[+] Linking MSSQL tools..."
+# This was installed with Impacket, but the script is not linked by default
+sudo chmod +x /usr/local/bin/mssqlclient.py
+sudo ln -s /usr/local/bin/mssqlclient.py /usr/bin/mssqlclient
+
 
 echo "[+] Cleaning up PATH..."
 if ! grep -q "/opt" ~/.bashrc; then
