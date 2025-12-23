@@ -5,7 +5,7 @@ echo "[+] Updating system..."
 sudo apt update -y && sudo apt full-upgrade -y
 
 echo "[+] Installing baseline packages..."
-sudo apt install -y git curl wget python3 python3-pip pipx ruby-full golang ffuf gobuster seclists dirb smbclient cifs-utils locate libssl-dev liblua5.4-dev lua5.4
+sudo apt install -y git curl wget telnet ftp python3 python3-pip pipx nfs-common ruby-full golang ffuf gobuster seclists dirb smbclient cifs-utils locate libssl-dev liblua5.4-dev lua5.4
 
 # Note: The default Parrot nmap install has broken mssql scripts. This reinstalls nmap to fix that.
 echo "[+] Reinstalling Nmap to ensure latest scripts (fixed mssql)..."
@@ -16,6 +16,13 @@ sudo rm -rf /usr/local/share/nmap
 sudo apt update -y
 sudo apt install -y nmap nmap-common
 sudo nmap --script-updatedb
+
+# I thought this was installed naturally as part of Parrot Security. I swear I used it before, but it appears it stopped working on me.
+echo "[+] Installing metasploit..."
+curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
+chmod 755 msfinstall
+sudo ./msfinstall
+rm msfinstall
 
 echo "[+] Setting up rust..."
 curl https://sh.rustup.rs -sSf | sh -s -- -y
@@ -80,6 +87,29 @@ sudo gem install evil-winrm
 echo "[+] Installing RustScan..."
 cargo install rustscan
 
+echo "[+] Installing Oracle Database tools (ODAT)..."
+wget https://download.oracle.com/otn_software/linux/instantclient/214000/instantclient-basic-linux.x64-21.4.0.0.0dbru.zip
+wget https://download.oracle.com/otn_software/linux/instantclient/214000/instantclient-sqlplus-linux.x64-21.4.0.0.0dbru.zip
+sudo mkdir -p /opt/oracle
+sudo unzip -d /opt/oracle instantclient-basic-linux.x64-21.4.0.0.0dbru.zip
+sudo unzip -d /opt/oracle instantclient-sqlplus-linux.x64-21.4.0.0.0dbru.zip
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_21_4:$LD_LIBRARY_PATH
+export PATH=$LD_LIBRARY_PATH:$PATH
+source ~/.bashrc
+cd ~
+git clone https://github.com/quentinhardy/odat.git
+cd odat/
+pip install --break-system-packages python-libnmap
+git submodule init
+git submodule update
+pip3 install --break-system-packages cx_Oracle
+sudo apt-get install python3-scapy -y
+sudo pip3 install --break-system-packages colorlog termcolor passlib python-libnmap
+sudo apt-get install build-essential libgmp-dev -y
+pip3 install --break-system-packages pycryptodome
+echo "You may now interact with ODAT using `python3 odat.py -h`"
+sudo ln -s /opt/oracle/instantclient_21_4/sqlplus /usr/bin/sqlplus
+
 echo "[+] Installing Kerbrute..."
 go install github.com/ropnop/kerbrute@latest
 
@@ -118,7 +148,6 @@ echo "[+] Linking MSSQL tools..."
 # This was installed with Impacket, but the script is not linked by default
 sudo chmod +x /usr/local/bin/mssqlclient.py
 sudo ln -s /usr/local/bin/mssqlclient.py /usr/bin/mssqlclient
-
 
 echo "[+] Cleaning up PATH..."
 if ! grep -q "/opt" ~/.bashrc; then
