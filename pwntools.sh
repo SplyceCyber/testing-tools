@@ -5,7 +5,7 @@ echo "[+] Updating system..."
 sudo apt update -y && sudo apt full-upgrade -y
 
 echo "[+] Installing baseline packages..."
-sudo apt install -y git curl wget telnet ftp python3 python3-pip pipx nfs-common ruby-full golang ffuf gobuster seclists dirb smbclient cifs-utils locate libssl-dev liblua5.4-dev lua5.4
+sudo apt install -y git curl wget telnet ftp freerdp2-x11 python3 python3-pip pipx nfs-common ruby-full golang ffuf gobuster dirb smbclient cifs-utils locate libssl-dev liblua5.4-dev lua5.4
 
 # Note: The default Parrot nmap install has broken mssql scripts. This reinstalls nmap to fix that.
 echo "[+] Reinstalling Nmap to ensure latest scripts (fixed mssql)..."
@@ -30,7 +30,7 @@ source ~/.cargo/env
 echo 'source ~/.cargo/env' >> ~/.bashrc
 
 echo "[+] Creating /opt structure..."
-sudo mkdir -p /opt/{SecLists,assetnote-wordlists,fuzzdb,probable-wordlists,dirsearch,reconftw,peass,lse,pspy,PowerSploit,bloodhound,PATT,LinEnum,SUID3NUM,feroxbuster}
+sudo mkdir -p /opt/{assetnote-wordlists,fuzzdb,probable-wordlists,dirsearch,reconftw,peass,lse,pspy,PowerSploit,bloodhound,PATT,LinEnum,SUID3NUM,feroxbuster}
 
 echo "[+] Intalling feroxbuster..."
 curl -sL https://raw.githubusercontent.com/epi052/feroxbuster/main/install-nix.sh > install-nix.sh
@@ -40,7 +40,8 @@ bash /opt/feroxbuster/install-nix.sh
 mv feroxbuster /usr/local/bin/feroxbuster
 
 echo "[+] Installing SecLists..."
-sudo rsync -av --ignore-existing /usr/share/seclists/ /opt/SecLists/ || true
+git clone --depth 1 https://github.com/danielmiessler/SecLists.git ~/seclists-git || true
+sudo ln -sfn ~/seclists-git /usr/share/seclists
 
 echo "[+] Installing Assetnote wordlists..."
 sudo git clone https://github.com/assetnote/wordlists.git /opt/assetnote-wordlists || true
